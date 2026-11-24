@@ -1,0 +1,62 @@
+<div class="card h-100 shadow-sm border-0 product-card">
+  <!-- Card Media / Image Header -->
+  <div class="product-media position-relative overflow-hidden bg-white text-center p-3 rounded-top">
+    <img
+      [src]="product.image"
+      [alt]="product.name"
+      class="img-fluid h-100 object-fit-contain product-img"
+      loading="lazy"
+      (error)="onImageError($event)"
+    />
+
+    <!-- Projected Slot: Custom Badge (e.g. Top Rated, Sale, New) -->
+    <div class="position-absolute top-0 end-0 m-2">
+      <ng-content select="[card-badge]"></ng-content>
+    </div>
+
+    <!-- Projected Slot: Quick Actions (e.g. Wishlist / Favorite) -->
+    <div class="position-absolute top-0 start-0 m-2">
+      <ng-content select="[card-quick-action]"></ng-content>
+    </div>
+  </div>
+
+  <!-- Card Body -->
+  <div class="card-body d-flex flex-column p-3">
+    <!-- Meta: Color & Rating -->
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <span class="badge bg-light text-dark border small text-capitalize px-2 py-1">
+        <i class="fa-solid fa-palette text-secondary me-1"></i> {{ product.color }}
+      </span>
+      <div class="d-flex align-items-center text-warning small fw-bold">
+        <i class="fa-solid fa-star me-1"></i>
+        <span>{{ product.rating }} / 5</span>
+      </div>
+    </div>
+
+    <!-- Product Title -->
+    <h5 class="card-title fs-6 fw-semibold mb-2 product-title" [title]="product.name">
+      {{ product.name }}
+    </h5>
+
+    <!-- Product Details / Price & Date -->
+    <div class="mt-auto pt-2">
+      <div class="d-flex justify-content-between align-items-baseline mb-3">
+        <div>
+          <span class="fs-5 fw-bold text-primary">
+            {{ product.price | currency : product.currency : 'symbol' : '1.2-2' }}
+          </span>
+        </div>
+        <small class="text-muted" title="Release date">
+          <i class="fa-regular fa-calendar-days me-1"></i> {{ product.releaseDate | date : 'mediumDate' }}
+        </small>
+      </div>
+
+      <!-- Projected Slot: Action Buttons (Add to Cart, View Details, etc.) -->
+      <div class="card-actions d-grid gap-2">
+        <ng-content select="[card-actions]"></ng-content>
+        <!-- Default Content Projection Slot -->
+        <ng-content></ng-content>
+      </div>
+    </div>
+  </div>
+</div>

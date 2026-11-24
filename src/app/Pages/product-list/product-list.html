@@ -1,0 +1,180 @@
+<div class="product-page">
+  <!-- Toast Notification -->
+  @if (cartMessage()) {
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1080;">
+      <div class="toast show align-items-center text-bg-success border-0 shadow">
+        <div class="d-flex">
+          <div class="toast-body">
+            <i class="fa-solid fa-circle-check me-2"></i> {{ cartMessage() }}
+          </div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="cartMessage.set(null)"></button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Header & Search/Sort Controls -->
+  <div class="row align-items-center mb-4 g-3">
+    <div class="col-lg-5">
+      <h2 class="fw-bold mb-1">Product Catalog</h2>
+      <p class="text-muted mb-0">
+        Discover over {{ products().length }} quality items across {{ categories().length }} categories
+      </p>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+      <div class="input-group">
+        <span class="input-group-text bg-white border-end-0">
+          <i class="fa-solid fa-magnifying-glass text-secondary"></i>
+        </span>
+        <input
+          type="text"
+          class="form-control border-start-0"
+          placeholder="Search by title, color..."
+          [ngModel]="searchQuery()"
+          (ngModelChange)="onSearchChange($event)"
+        />
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+      <select
+        class="form-select"
+        [ngModel]="sortBy()"
+        (ngModelChange)="onSortChange($event)"
+        aria-label="Sort products"
+      >
+        <option value="featured">Sort by: Default</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="rating-desc">Rating: High to Low</option>
+        <option value="date-desc">Newest First</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Category Pills Filter with Counts -->
+  <div class="d-flex flex-wrap gap-2 mb-4 pb-2 border-bottom align-items-center">
+    <button
+      type="button"
+      class="btn btn-sm rounded-pill px-3"
+      [class.btn-primary]="selectedCategoryId() === null"
+      [class.btn-outline-secondary]="selectedCategoryId() !== null"
+      (click)="selectCategory(null)"
+    >
+      <i class="fa-solid fa-layer-group me-1"></i> All ({{ products().length }})
+    </button>
+
+    @for (cat of categories(); track cat.id) {
+      <button
+        type="button"
+        class="btn btn-sm rounded-pill px-3"
+        [class.btn-primary]="selectedCategoryId() === cat.id"
+        [class.btn-outline-secondary]="selectedCategoryId() !== cat.id"
+        (click)="selectCategory(cat.id)"
+      >
+        <i class="fa-solid fa-tag me-1"></i> {{ cat.name }} ({{ categoryCounts().get(cat.id) || 0 }})
+      </button>
+    }
+  </div>
+
+  <!-- Loading State -->
+  @if (loading()) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="text-muted mt-2">Loading products...</p>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (error()) {
+    <div class="alert alert-danger d-flex align-items-center" role="alert">
+      <i class="fa-solid fa-triangle-exclamation me-2"></i>
+      <div>
+        <strong>Error:</strong> {{ error() }}
+      </div>
+    </div>
+  }
+
+  <!-- Product List & Pagination -->
+  @if (!loading() && !error()) {
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <small class="text-muted">
+        Showing {{ paginatedProducts().length }} of {{ filteredProducts().length }} products
+        (Page {{ currentPage() }} of {{ totalPages() }})
+      </small>
+    </div>
+
+    @if (filteredProducts().length === 0) {
+      <div class="text-center py-5 bg-white rounded-3 shadow-sm border p-4 my-3">
+        <i class="fa-solid fa-box-open fs-1 text-muted mb-3 d-block"></i>
+        <h4 class="text-muted mb-2">No products found</h4>
+        <p class="text-secondary mb-3">Try choosing another category or clearing your search filter.</p>
+        <button class="btn btn-outline-primary btn-sm" (click)="selectCategory(null); searchQuery.set('')">
+          <i class="fa-solid fa-rotate-left me-1"></i> Reset All Filters
+        </button>
+      </div>
+    } @else {
+      <!-- Product Grid using Content Projection with app-product-card -->
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-4">
+        @for (item of paginatedProducts(); track item.id) {
+          <div class="col">
+            <app-product-card [product]="item">
+              <!-- Projected slot 1: Custom Badge for top rating -->
+              @if (item.rating === 5) {
+                <span card-badge class="badge bg-danger shadow-sm">
+                  <i class="fa-solid fa-star me-1"></i> Top Rated
+                </span>
+              }
+
+              <!-- Projected slot 2: Action Buttons -->
+              <div card-actions class="d-flex gap-2">
+                <button
+                  class="btn btn-primary btn-sm flex-grow-1 d-flex align-items-center justify-content-center gap-1"
+                  (click)="addToCart(item)"
+                >
+                  <i class="fa-solid fa-cart-plus me-1"></i> Add to Cart
+                </button>
+              </div>
+            </app-product-card>
+          </div>
+        }
+      </div>
+
+      <!-- Pagination Controls -->
+      @if (totalPages() > 1) {
+        <nav aria-label="Product catalog pagination" class="d-flex justify-content-center my-4">
+          <ul class="pagination shadow-sm">
+            <li class="page-item" [class.disabled]="currentPage() === 1">
+              <button class="page-link" (click)="goToPage(1)" aria-label="First page">
+                <i class="fa-solid fa-angles-left"></i>
+              </button>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage() === 1">
+              <button class="page-link" (click)="goToPage(currentPage() - 1)" aria-label="Previous">
+                <i class="fa-solid fa-angle-left"></i>
+              </button>
+            </li>
+
+            @for (p of pageNumbers(); track p) {
+              <li class="page-item" [class.active]="currentPage() === p">
+                <button class="page-link" (click)="goToPage(p)">{{ p }}</button>
+              </li>
+            }
+
+            <li class="page-item" [class.disabled]="currentPage() === totalPages()">
+              <button class="page-link" (click)="goToPage(currentPage() + 1)" aria-label="Next">
+                <i class="fa-solid fa-angle-right"></i>
+              </button>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage() === totalPages()">
+              <button class="page-link" (click)="goToPage(totalPages())" aria-label="Last page">
+                <i class="fa-solid fa-angles-right"></i>
+              </button>
+            </li>
+          </ul>
+        </nav>
+      }
+    }
+  }
+</div>

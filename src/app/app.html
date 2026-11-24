@@ -1,0 +1,78 @@
+<!-- Dynamic Top Announcement Bar from Server -->
+@if (siteInfo().announcement) {
+  <div class="bg-primary text-white text-center py-2 px-3 small fw-semibold shadow-sm">
+    <i class="fa-solid fa-fire text-warning me-1"></i> {{ siteInfo().announcement }}
+  </div>
+}
+
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
+  <div class="container">
+    <a class="navbar-brand fw-bold text-uppercase d-flex align-items-center gap-2" routerLink="/home">
+      <i class="fa-solid fa-cart-shopping text-primary"></i> {{ siteInfo().title }}
+    </a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#mainNavbar"
+      aria-controls="mainNavbar"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="mainNavbar">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            <i class="fa-solid fa-house me-1"></i> Home
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/products" routerLinkActive="active">
+            <i class="fa-solid fa-boxes-stacked me-1"></i> Products
+          </a>
+        </li>
+      </ul>
+
+      <!-- User status from server / Login button -->
+      <div class="d-flex align-items-center gap-3">
+        @if (productService.currentUser(); as user) {
+          <div class="d-flex align-items-center gap-2 text-light small">
+            <span class="badge bg-success-subtle text-success border">
+              <i class="fa-solid fa-circle-check me-1"></i> Logged in
+            </span>
+            <span class="fw-semibold">{{ user.name }}</span>
+            <button class="btn btn-outline-danger btn-sm py-0 px-2" (click)="logout()">
+              <i class="fa-solid fa-arrow-right-from-bracket me-1"></i> Logout
+            </button>
+          </div>
+        } @else {
+          <a class="btn btn-outline-light btn-sm px-3" routerLink="/login" routerLinkActive="active">
+            <i class="fa-solid fa-user me-1"></i> Sign In
+          </a>
+        }
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Routed Content (Router Outlet) -->
+<main class="py-4 min-vh-100">
+  <div class="container">
+    <router-outlet></router-outlet>
+  </div>
+</main>
+
+<!-- Dynamic Footer from Server -->
+<footer class="bg-dark text-secondary py-4 text-center mt-auto border-top border-secondary">
+  <div class="container">
+    <p class="mb-1 text-light">&copy; {{ siteInfo().year }} {{ siteInfo().title }} — {{ siteInfo().tagline }}.</p>
+    <small class="text-secondary">
+      <i class="fa-solid fa-server me-1"></i> Connected to REST API Server &bull; 
+      <i class="fa-solid fa-envelope ms-2 me-1"></i> Support: {{ siteInfo().supportEmail }}
+    </small>
+  </div>
+</footer>

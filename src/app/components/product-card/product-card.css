@@ -1,0 +1,43 @@
+.product-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1) !important;
+}
+
+.product-media {
+  height: 220px;
+  background: radial-gradient(circle, #ffffff 60%, #f8f9fa 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-img {
+  transition: transform 0.3s ease;
+  max-height: 190px;
+  object-fit: contain;
+}
+
+.product-card:hover .product-img {
+  transform: scale(1.05);
+}
+
+.product-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.4;
+  min-height: 2.8em;
+  color: #212529;
+}
+
+.card-actions {
+  min-height: 38px;
+}

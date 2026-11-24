@@ -1,0 +1,116 @@
+<div class="row justify-content-center py-5">
+  <div class="col-md-6 col-lg-5">
+    <div class="card border-0 shadow rounded-4 p-4">
+      <div class="card-body">
+        <h3 class="card-title fw-bold text-center mb-1">Account Sign In</h3>
+        <p class="text-muted text-center small mb-4">
+          Authenticate directly against the Backend Server
+        </p>
+
+        <!-- Current User State If Already Logged In -->
+        @if (productService.currentUser(); as user) {
+          <div class="alert alert-success text-center">
+            <h5 class="fw-bold mb-1">
+              <i class="fa-solid fa-circle-check text-success me-1"></i> You are logged in!
+            </h5>
+            <p class="mb-1"><strong>Name:</strong> {{ user.name }}</p>
+            <p class="mb-2"><strong>Role:</strong> <span class="badge bg-success">{{ user.role }}</span></p>
+            <div class="d-flex gap-2 justify-content-center mt-3">
+              <a routerLink="/products" class="btn btn-primary btn-sm">
+                <i class="fa-solid fa-bag-shopping me-1"></i> Shop Now
+              </a>
+              <button class="btn btn-outline-danger btn-sm" (click)="logout()">
+                <i class="fa-solid fa-arrow-right-from-bracket me-1"></i> Sign Out
+              </button>
+            </div>
+          </div>
+        } @else {
+          <!-- Error Alert -->
+          @if (errorMessage()) {
+            <div class="alert alert-danger py-2 small d-flex align-items-center">
+              <i class="fa-solid fa-triangle-exclamation text-danger me-2"></i>
+              <span>{{ errorMessage() }}</span>
+            </div>
+          }
+
+          <!-- Success Alert -->
+          @if (successMessage()) {
+            <div class="alert alert-success py-2 small d-flex align-items-center">
+              <i class="fa-solid fa-circle-check text-success me-2"></i>
+              <span>{{ successMessage() }} Redirecting...</span>
+            </div>
+          }
+
+          <!-- Sign In Form with Live Server Call -->
+          <form (submit)="$event.preventDefault(); onSubmit()">
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Email address</label>
+              <div class="input-group">
+                <span class="input-group-text bg-white">
+                  <i class="fa-solid fa-envelope text-secondary"></i>
+                </span>
+                <input
+                  type="email"
+                  class="form-control"
+                  [ngModel]="email()"
+                  (ngModelChange)="email.set($event)"
+                  name="email"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Password</label>
+              <div class="input-group">
+                <span class="input-group-text bg-white">
+                  <i class="fa-solid fa-lock text-secondary"></i>
+                </span>
+                <input
+                  type="password"
+                  class="form-control"
+                  [ngModel]="password()"
+                  (ngModelChange)="password.set($event)"
+                  name="password"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="d-grid mb-3">
+              <button type="submit" class="btn btn-primary py-2 fw-semibold" [disabled]="loading()">
+                @if (loading()) {
+                  <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                  Connecting to Server...
+                } @else {
+                  Sign In via Server <i class="fa-solid fa-arrow-right ms-1"></i>
+                }
+              </button>
+            </div>
+
+            <!-- Quick Demo Credentials Helper -->
+            <div class="p-3 bg-light rounded-3 border small mb-3">
+              <div class="fw-bold text-muted mb-2">
+                <i class="fa-solid fa-key text-primary me-1"></i> Quick Test Accounts:
+              </div>
+              <div class="d-flex gap-2">
+                <button type="button" class="btn btn-sm btn-outline-secondary" (click)="fillDemo('user')">
+                  <i class="fa-solid fa-user me-1"></i> Customer Demo
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" (click)="fillDemo('admin')">
+                  <i class="fa-solid fa-user-shield me-1"></i> Admin Demo
+                </button>
+              </div>
+            </div>
+
+            <div class="text-center">
+              <a routerLink="/products" class="text-decoration-none small text-secondary">
+                <i class="fa-solid fa-arrow-left me-1"></i> Back to Product Catalog
+              </a>
+            </div>
+          </form>
+        }
+      </div>
+    </div>
+  </div>
+</div>
